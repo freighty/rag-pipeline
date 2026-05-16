@@ -1,0 +1,40 @@
+---
+
+services:
+  jupyter:
+    build: .
+    container_name: jupyter
+    image: jupyter/base-notebook:latest
+    volumes:
+      - ./notebooks:/home/jovyan/work
+    environment:
+      JUPYTER_TOKEN: ${JUPYTER_TOKEN}
+    restart: always
+    user: jovyan
+    working_dir: /home/jovyan/work
+    ports:
+      - "8888:8888"
+    networks:
+      - rag_network
+
+  pgvector:
+    image: ankane/pgvector
+    hostname: pgvector
+    container_name: pgvector
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: vectordb
+      POSTGRES_HOST_AUTH_METHOD: trust # prevent this line from reaching prod.
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - rag_network
+    restart: always
+    ports:
+      - "5432:5432"
+
+networks:
+  rag_network:
+    driver: bridge

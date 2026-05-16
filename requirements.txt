@@ -1,0 +1,7 @@
+langchain-community
+python-dotenv
+psycopg2-binary
+pgvector
+langchain-text-splitters
+gpt4all
+langchain-openai
